@@ -14,6 +14,7 @@ class Application(Frame):
         self.canhight = 450
         self.pause = False
         self.gray = False
+        self.sobel = False
 
         # ---------Filters----------
         self.btn1 = Button(text='Gray',
@@ -23,6 +24,14 @@ class Application(Frame):
                            pady='10',
                            command=lambda: self.reverve_value('gray'))
         self.btn1.place(x='50', y='50')
+
+        self.btn2 = Button(text='Sobel',
+                           fg='white',
+                           bg='black',
+                           padx='20',
+                           pady='10',
+                           command=lambda: self.reverve_value('sobel'))
+        self.btn2.place(x='50', y='120')
 
         # ----------Video-------------
         self.btn_open = Button(text='Open file',
@@ -54,6 +63,9 @@ class Application(Frame):
                 self.frame = cv2.cvtColor(self.frame, cv2.COLOR_BGR2GRAY)
             else:
                 self.frame = cv2.cvtColor(self.frame, cv2.COLOR_BGR2RGB)
+
+            if self.sobel:
+                self.frame = np.uint8(cv2.Laplacian(self.frame, cv2.CV_64F))
 
             self.frame = cv2.resize(self.frame, (self.canwidth, self.canhight))
             self.photo = ImageTk.PhotoImage(
