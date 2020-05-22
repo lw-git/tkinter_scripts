@@ -16,6 +16,7 @@ class Application(Frame):
         self.gray = False
         self.sobel = False
         self.rotate = False
+        self.neg = False
 
         # ---------Filters----------
         self.btn1 = Button(text='Gray',
@@ -39,6 +40,13 @@ class Application(Frame):
                            pady='10',
                            command=lambda: self.reverve_value('rotate'))
         self.btn3.place(x='50', y='190')
+        self.btn4 = Button(text='Negative',
+                           fg='white',
+                           bg='black',
+                           padx='20',
+                           pady='10',
+                           command=lambda: self.reverve_value('neg'))
+        self.btn4.place(x='50', y='260')
 
         # ----------Video-------------
         self.btn_open = Button(text='Open file',
@@ -76,6 +84,9 @@ class Application(Frame):
 
             if self.rotate:
                 self.frame = cv2.flip(self.frame, 0)
+
+            if self.neg:
+                self.frame = cv2.bitwise_not(self.frame)
 
             self.frame = cv2.resize(self.frame, (self.canwidth, self.canhight))
             self.photo = ImageTk.PhotoImage(
