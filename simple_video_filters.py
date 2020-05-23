@@ -17,6 +17,7 @@ class Application(Frame):
         self.sobel = False
         self.rotate = False
         self.neg = False
+        self.mosaic = False
 
         # ---------Filters----------
         self.btn1 = Button(text='Gray',
@@ -47,6 +48,13 @@ class Application(Frame):
                            pady='10',
                            command=lambda: self.reverve_value('neg'))
         self.btn4.place(x='50', y='260')
+        self.btn5 = Button(text='Mosaic',
+                           fg='white',
+                           bg='black',
+                           padx='20',
+                           pady='10',
+                           command=lambda: self.reverve_value('mosaic'))
+        self.btn5.place(x='50', y='330')
 
         # ----------Video-------------
         self.btn_open = Button(text='Open file',
@@ -68,6 +76,14 @@ class Application(Frame):
         self.canvas = Canvas(root, width=850, height=450, bg='blue')
         self.canvas.place(x='200', y='1')
 
+    def mosaic_filter(self, selected_image, nsize=30):
+        rows, cols, _ = selected_image.shape
+        dist = selected_image.copy()
+        for y in range(0, rows, nsize):
+            for x in range(0, cols, nsize):
+                dist[y: y + nsize, x: x + nsize] = (np.random.randint(0, 255), np.random.randint(0, 255), np.random.randint(0, 255))
+        return dist
+
     def reverve_value(self, x):
         setattr(self, x, not getattr(self, x))
 
@@ -76,8 +92,10 @@ class Application(Frame):
         if self.ret:
             if self.gray:
                 self.frame = cv2.cvtColor(self.frame, cv2.COLOR_BGR2GRAY)
+                self.btn5.config(state='disabled')
             else:
                 self.frame = cv2.cvtColor(self.frame, cv2.COLOR_BGR2RGB)
+                self.btn5.config(state='normal')
 
             if self.sobel:
                 self.frame = np.uint8(cv2.Laplacian(self.frame, cv2.CV_64F))
@@ -87,6 +105,12 @@ class Application(Frame):
 
             if self.neg:
                 self.frame = cv2.bitwise_not(self.frame)
+
+            if self.mosaic:
+                self.frame = self.mosaic_filter(self.frame)
+                self.btn1.config(state='disabled')
+            else:
+                self.btn1.config(state='normal')
 
             self.frame = cv2.resize(self.frame, (self.canwidth, self.canhight))
             self.photo = ImageTk.PhotoImage(
