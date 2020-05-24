@@ -18,6 +18,9 @@ class Application(Frame):
         self.rotate = False
         self.neg = False
         self.mosaic = False
+        self.sharp = False
+        self.kernel_sharpening = np.array([[-1,-1,-1], [-1, 9,-1], [-1,-1,-1]])
+
 
         # ---------Filters----------
         self.btn1 = Button(text='Gray',
@@ -55,6 +58,13 @@ class Application(Frame):
                            pady='10',
                            command=lambda: self.reverve_value('mosaic'))
         self.btn5.place(x='50', y='330')
+        self.btn6 = Button(text='Sharp',
+                           fg='white',
+                           bg='black',
+                           padx='20',
+                           pady='10',
+                           command=lambda: self.reverve_value('sharp'))
+        self.btn6.place(x='50', y='400')
 
         # ----------Video-------------
         self.btn_open = Button(text='Open file',
@@ -111,6 +121,9 @@ class Application(Frame):
                 self.btn1.config(state='disabled')
             else:
                 self.btn1.config(state='normal')
+
+            if self.sharp:
+                self.frame = cv2.filter2D(self.frame, -1, self.kernel_sharpening)
 
             self.frame = cv2.resize(self.frame, (self.canwidth, self.canhight))
             self.photo = ImageTk.PhotoImage(
