@@ -1,8 +1,8 @@
 from tkinter import Button, Canvas, Frame, Tk
 import cv2
 import numpy as np
-from tkinter.filedialog import askopenfile
-from PIL import Image, ImageTk
+from tkinter.filedialog import askopenfile, asksaveasfilename
+from PIL import Image, ImageTk, ImageGrab
 
 
 class Application(Frame):
@@ -19,8 +19,7 @@ class Application(Frame):
         self.neg = False
         self.mosaic = False
         self.sharp = False
-        self.kernel_sharpening = np.array([[-1,-1,-1], [-1, 9,-1], [-1,-1,-1]])
-
+        self.kernel_sharpening = np.array([[-1,-1,-1], [-1, 9,-1], [-1,-1,-1]])        
 
         # ---------Filters----------
         self.btn1 = Button(text='Gray',
@@ -64,7 +63,7 @@ class Application(Frame):
                            padx='20',
                            pady='10',
                            command=lambda: self.reverve_value('sharp'))
-        self.btn6.place(x='50', y='400')
+        self.btn6.place(x='50', y='400')        
 
         # ----------Video-------------
         self.btn_open = Button(text='Open file',
@@ -81,6 +80,14 @@ class Application(Frame):
                                 pady='10',
                                 command=self.pause_video)
         self.btn_pause.place(x='310', y='480')
+        self.btn_save = Button(text='Save image',
+                                fg='white',
+                                bg='black',
+                                padx='20',
+                                pady='10',
+                                command=self.save_image)
+        self.btn_save.place(x='400', y='480')
+        self.btn_save.config(state="disabled")
 
         # ------------Canvas---------------
         self.canvas = Canvas(root, width=850, height=450, bg='blue')
@@ -136,13 +143,23 @@ class Application(Frame):
         if not self.pause:
             self.root.after(self.delay, self.start_video)
 
+    def save_image(self):
+        x = self.canvas.winfo_rootx()
+        y = self.canvas.winfo_rooty()
+        x2 = x + self.canvas.winfo_width()
+        y2 = y + self.canvas.winfo_height()
+        filename = asksaveasfilename()
+        ImageGrab.grab([x, y, x2, y2]).save(filename)
+
     def pause_video(self):
         if self.pause is False:
             self.pause = True
             self.btn_open.config(state="normal")
+            self.btn_save.config(state="normal")
         else:
             self.pause = False
             self.btn_open.config(state="disabled")
+            self.btn_save.config(state="disabled")
             self.start_video()
 
     def open_file(self):
