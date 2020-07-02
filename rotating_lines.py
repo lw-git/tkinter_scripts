@@ -28,12 +28,14 @@ class Application(tk.Frame):
         while self.flag:
             self.canvas.delete('all')
             self.create_new_line(100, 100, 100, 2)
-            self.create_new_line(350, 125, 125, 5)
+            self.create_new_line(350, 125, 125, 5, reverse=True)
             self.angle += 1
             time.sleep(0.01)
 
-    def create_new_line(self, x1, y1, length, width):
+    def create_new_line(self, x1, y1, length, width, reverse=False):
         angle = math.radians(self.angle)
+        if reverse:
+            angle = - angle
         end_x = x1 + length * math.cos(angle)
         end_y = y1 + length * math.sin(angle)
         self.canvas.create_line(x1, y1, end_x, end_y, width=width)
